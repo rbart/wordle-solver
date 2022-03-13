@@ -14,21 +14,25 @@ words = []
 
 # Remember to include all grays
 # Use force_uniq sparingly.
-# Consider making two blind initial guesses e.g. cares and bunty
-
-greens = greens = "s?i??"#"?odge"
-greens = [(c, i) for (i,c) in enumerate(greens) if c != '?']
-
-yellows = ""
-yellows = [(c, i) for (i,c) in enumerate(yellows) if c != '?']
-
-grays = "anthrepcykm"
-grays = [c for c in grays]
-
+greens = greens = ""
+yellows = [""]
+grays = ""
 force_uniq = False
 
+
+
+
+greens = [(c, i) for (i,c) in enumerate(greens) if c != '?']
+yellows = [
+    [(c, i) for (i,c) in enumerate(yellow) if c != '?']
+    for yellow in yellows
+]
+yellows = [
+    rule for rules in yellows for rule in rules
+]
+grays = [c for c in grays]
+
 def filter_word(w):
-    # refactor to green, yellow, gray
     return (
         all(w[i] == c for (c,i) in greens) and
         all(c in w and w[i] != c for (c,i) in yellows) and
@@ -38,7 +42,6 @@ def filter_word(w):
 for line in sys.stdin:
     line = line.strip()
     total_words += 1
-    #words.append(line)
     if filter_word(line):
         words.append(line)
 
@@ -78,6 +81,5 @@ ranked_words = [
 ranked_words.sort(key=lambda x: x[1])
 ranked_words = ranked_words[-25:]
 
-# json_str = json.dumps(ranked_words, indent=2)
 for word, prob in ranked_words:
     print(word + "\t" + str(prob))
